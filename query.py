@@ -1,4 +1,4 @@
-from pyspark.sql.functions import col, filter, row_number
+from pyspark.sql.functions import col, filter, row_number, min, max, to_timestamp
 from pyspark.sql.window import Window
 from pyspark.sql.types import DoubleType
 import cleanup
@@ -21,3 +21,12 @@ def top_3_most_viewed_ads_per_color(df_ads, df_views):
                      .filter(col("row") <= 3) \
                      .select(col("attributes.exteriorColor").alias("color"), \
                              "id", "version", "count", "row")
+                     
+def get_oldest_most_recent_time_between(df):
+    return df.groupBy("ad.id") \
+             .agg(max("event.time").alias("most_recent"),
+                  min("event.time").alias("oldest")) \
+             .withColumn("time_active_seconds", col("most_recent") - col("oldest")) \
+             .withColumn("most_recent", to_timestamp("most_recent")) \
+             .withColumn("oldest", to_timestamp("oldest"))
+                              
