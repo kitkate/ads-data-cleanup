@@ -9,6 +9,6 @@ resources:
       tasks:
         - task_key: Run_at_noon
           notebook_task:
-            notebook_path: /Repos/ekaterina.v.mihaylova@gmail.com/ads-data-cleanup/Clean Data
+            notebook_path: /Repos/ekaterina.v.mihaylova@gmail.com/ads-data-cleanup/Solution
             source: WORKSPACE
           existing_cluster_id: 0225-094706-y45h8qdi
