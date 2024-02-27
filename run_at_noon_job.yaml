@@ -1,0 +1,14 @@
+resources:
+  jobs:
+    Run_at_noon:
+      name: Run_at_noon
+      schedule:
+        quartz_cron_expression: 0 0 12 ? * MON-FRI
+        timezone_id: Europe/Athens
+        pause_status: UNPAUSED
+      tasks:
+        - task_key: Run_at_noon
+          notebook_task:
+            notebook_path: /Repos/ekaterina.v.mihaylova@gmail.com/ads-data-cleanup/Clean Data
+            source: WORKSPACE
+          existing_cluster_id: 0225-094706-y45h8qdi
