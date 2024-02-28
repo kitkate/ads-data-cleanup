@@ -98,6 +98,35 @@ dbutils.fs.rm("dbfs:/tmp/add_view_times", True)
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ## Flattening the nested schemas
+# MAGIC
+# MAGIC The flattened parquet files could be found at `/FileStore/ads.parquet` and `/FileStore/views.parquet`.
+
+# COMMAND ----------
+
+import cleanup
+
+cleanup.flatten(df_ads).write.mode('overwrite').parquet("/tmp/ads")
+
+dbutils.fs.rm("dbfs:/FileStore/ads.parquet")
+for file_info in dbutils.fs.ls("/tmp/ads/"):
+    if file_info.name.endswith(".parquet"):
+        dbutils.fs.mv(file_info.path, "dbfs:/FileStore/ads.parquet")
+        break
+dbutils.fs.rm("dbfs:/ads/ads", True)
+
+cleanup.flatten(df_views).write.mode('overwrite').parquet("/tmp/views")
+
+dbutils.fs.rm("dbfs:/FileStore/views.parquet")
+for file_info in dbutils.fs.ls("/tmp/views/"):
+    if file_info.name.endswith(".parquet"):
+        dbutils.fs.mv(file_info.path, "dbfs:/FileStore/views.parquet")
+        break
+dbutils.fs.rm("dbfs:/tmp/views", True)
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC ## The inconsistency
 # MAGIC
 # MAGIC The **id** in ads.json does not pertain to the ads but to the cars. The unique identifier for ads as it stand now consists of both **id** and **version**. To mitigate this a new column might be created - **ad_id** consisting of the concatenated values of **id** and **version** with an **_** between them. Additionally the current column **id** should be renamed as **car_id** as to not be confused.

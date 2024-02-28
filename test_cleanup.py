@@ -13,6 +13,16 @@ class TestCleanup(unittest.TestCase):
             df_cleaned.collect()[0][0][0], "BLACK", "Ads color not cleaned correctly"
         )
 
+    def test_flatten(self):
+        data = [((("1", "2"), "BGN"), "1")]
+        schema = "price struct<consumerValue:struct<gross:string, net:string>, currency:string>, version string"
+        df = spark.createDataFrame(data, schema=schema)
+
+        df_flattened = cleanup.flatten(df)
+        self.assertEqual(
+            df_flattened.schema.fields[0].name, "price__consumervalue__gross", "Field not flatten correctly"
+        )
+
 
 if __name__ == "__main__":
     test_runner = unittest.main(argv=[""], exit=False)
